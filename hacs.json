@@ -1,0 +1,7 @@
+{
+    "name": "NAAF/Yr Pollen Forecast",
+    "domains": [
+        "sensor"
+    ],
+    "iot_class": "Cloud Polling"
+}

@@ -1,0 +1,11 @@
+{
+  "manifest_version": 1,
+  "domain": "pollenvarsel_naaf_yr",
+  "name": "NAAF/Yr Pollen Forecast",
+  "codeowners": ["@kahera"],
+  "config_flow": false,
+  "documentation": "https://github.com/Kahera/pollenvarsling",
+  "homeassistant": "2026.3.0",
+  "requirements": ["aiohttp"],
+  "version": "1.0.0"
+}
