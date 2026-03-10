@@ -1,6 +1,6 @@
-# Pollenvarsel Integration
+# Home Assistant Pollen Forecast Integration (Pollenvarsling)
 
-A custom Home Assistant integration for displaying Norwegian pollen forecasts from NAAF (Norwegian Asthma and Allergy Association) for multiple locations.
+A custom Home Assistant integration for displaying Norwegian pollen forecasts from NAAF (Norwegian Asthma and Allergy Association), based on Yr's location codes.
 
 ## Installation
 

@@ -58,6 +58,7 @@ class PollenDataCoordinator(DataUpdateCoordinator):
         self.language = language
         self.region_name: str = location_id
         self.last_updated_at: str | None = None
+        self.pollen_names: dict[str, str] = {}
         self.data = {"today": {}, "tomorrow": {}}
 
     async def _async_update_data(self) -> dict:
@@ -97,6 +98,8 @@ class PollenDataCoordinator(DataUpdateCoordinator):
                                     "pollen_name": pollen_name,
                                     "date": date,
                                 }
+                                if pollen_name:
+                                    self.pollen_names[pollen_id] = pollen_name
 
             return parsed_data
 
@@ -193,10 +196,8 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         translations = TRANSLATIONS.get(language, TRANSLATIONS["en"])
         day_text = translations[self.day]
 
-        # Use localized pollen name from API data if available
-        today_data = self.coordinator.data.get("today", {})
-        pollen_data = today_data.get(self.pollen_type, {})
-        pollen_name = pollen_data.get("pollen_name", self.pollen_type)
+        # Use localized pollen name from coordinator's name mapping
+        pollen_name = self.coordinator.pollen_names.get(self.pollen_type, self.pollen_type)
 
         return f"{translations['pollen']} {pollen_name} {self._display_name} {day_text}"
 
