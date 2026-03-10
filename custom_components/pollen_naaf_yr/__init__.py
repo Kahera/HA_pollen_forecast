@@ -35,12 +35,12 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     pollen_types = pollen_config.get(CONF_POLLEN_TYPES, [])
     invalid_types = [t for t in pollen_types if t not in VALID_POLLEN_TYPES]
     if invalid_types:
-        _LOGGER.error(
-            "Invalid pollen type(s): %s. Valid types are: %s",
+        _LOGGER.warning(
+            "Unsupported pollen type(s) removed: %s. Valid types are: %s",
             ", ".join(invalid_types),
             ", ".join(sorted(VALID_POLLEN_TYPES)),
         )
-        return False
+        pollen_config[CONF_POLLEN_TYPES] = [t for t in pollen_types if t in VALID_POLLEN_TYPES]
 
     # Validate language
     language = pollen_config.get(CONF_LANGUAGE, "nb")

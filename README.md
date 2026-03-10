@@ -51,6 +51,7 @@ pollenvarsel_naaf_yr:
   - `nn` - Norwegian nynorsk
   - `sme` - Northern Sami
   - `en` - English
+  > ℹ️: The friendly_name will contain the english pollen type until that pollen type is starting to release pollen.
 
 - **update_frequency** (optional): How often to fetch data, in hours. Default: `3`
 
