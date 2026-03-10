@@ -75,11 +75,13 @@ class PollenDataCoordinator(DataUpdateCoordinator):
                 # Flatten the distribution structure
                 for level, level_data in distributions.items():
                     if "pollenTypes" in level_data:
+                        distribution_name = level_data.get("distributionName")
                         for pollen in level_data["pollenTypes"]:
                             pollen_name = pollen.get("name")
                             if pollen_name:
                                 parsed_data[day_key][pollen_name] = {
                                     "level": level,
+                                    "level_name": distribution_name,
                                     "date": date,
                                 }
 
@@ -206,6 +208,8 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
             "region_name": self.coordinator.region_name,
             "last_updated": self.coordinator.last_updated_at,
         }
+        if pollen_data.get("level_name"):
+            attrs["level_name"] = pollen_data.get("level_name")
         if self.custom_location_name:
             attrs["location_name"] = self.custom_location_name
         return attrs
