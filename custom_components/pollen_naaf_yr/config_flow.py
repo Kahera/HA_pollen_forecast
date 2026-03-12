@@ -60,12 +60,9 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required(
-                    CONF_LOCATION_ID,
-                    description={"suggested_value": user_input.get(CONF_LOCATION_ID, "") if user_input else ""},
-                ): selector.TextSelector(
+                vol.Required(CONF_LOCATION_ID): selector.TextSelector(
                     selector.TextSelectorConfig(
-                        placeholder="e.g., 1-189277"
+                        placeholder="e.g., indre-østlandet"
                     ),
                 ),
                 vol.Required(

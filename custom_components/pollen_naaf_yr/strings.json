@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NAAF/Yr Pollen Forecast",
+        "description": "Enter the Yr location ID (e.g., indre-østlandet)",
+        "data": {
+          "location_id": "Location ID",
+          "pollen_types": "Pollen Types",
+          "update_frequency": "Update Frequency (hours)",
+          "language": "Language"
+        }
+      }
+    },
+    "error": {
+      "location_required": "Location ID is required"
+    },
+    "abort": {
+      "already_configured": "This location is already configured"
+    }
+  }
+}
