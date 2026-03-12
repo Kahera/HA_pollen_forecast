@@ -62,7 +62,7 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_LOCATION_ID): selector.TextSelector(
                     selector.TextSelectorConfig(
-                        placeholder="e.g., indre-østlandet"
+                        placeholder="e.g., 1-189277"
                     ),
                 ),
                 vol.Required(
