@@ -21,7 +21,7 @@
   },
   "selector": {
     "pollen_type": {
-      "label": {
+      "options": {
         "hazel": "Hazel",
         "alder": "Alder",
         "willow": "Willow",
@@ -31,10 +31,9 @@
       }
     },
     "language": {
-      "label": {
+      "options": {
         "nb": "Norwegian (Bokmål)",
         "nn": "Norwegian (Nynorsk)",
-        "sme": "Northern Sámi",
         "en": "English"
       }
     }
@@ -43,5 +42,8 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "pollen": "Pollen"
+  },
+  "entry": {
+    "title": "Pollen Forecast"
   }
 }

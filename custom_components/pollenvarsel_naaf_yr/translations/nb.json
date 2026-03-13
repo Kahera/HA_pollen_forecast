@@ -2,26 +2,26 @@
   "config": {
     "step": {
       "user": {
-        "title": "NAAF/Yr Pollenprognose",
-        "description": "Skriv inn Yr-plasseringskoden (f.eks. 1-189277)",
+        "title": "NAAF/Yr Pollenvarsel",
+        "description": "Legg til varsel for valgte ",
         "data": {
-          "location_id": "Plasseringskode",
+          "location_id": "Lokasjonsskode (f.eks. 1-189277)",
+          "location_name": "Lokasjonsnavn (valgfritt)",
           "pollen_types": "Pollentyper",
-          "update_frequency": "Oppdateringsfrekvens (timer)",
-          "language": "Språk"
+          "update_frequency": "Oppdateringsfrekvens (i timer)"
         }
       }
     },
     "error": {
-      "location_required": "Plasseringskode er påkrevd"
+      "location_required": "Lokasjonsskode er påkrevd"
     },
     "abort": {
-      "already_configured": "Denne plasseringen er allerede konfigurert"
+      "already_configured": "Denne lokasjonen er allerede konfigurert"
     }
   },
   "selector": {
     "pollen_type": {
-      "label": {
+      "options": {
         "hazel": "Hassel",
         "alder": "Or",
         "willow": "Salix",
@@ -31,7 +31,7 @@
       }
     },
     "language": {
-      "label": {
+      "options": {
         "nb": "Norsk (Bokmål)",
         "nn": "Norsk (Nynorsk)",
         "en": "Engelsk"
@@ -42,5 +42,8 @@
     "today": "I dag",
     "tomorrow": "I morgen",
     "pollen": "Pollen"
+  },
+  "entry": {
+    "title": "Pollenvarsel"
   }
 }

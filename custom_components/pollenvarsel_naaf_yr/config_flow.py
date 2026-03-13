@@ -67,8 +67,12 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 # Use region name or location_id as fallback
                 display_name = region_name or location_id
                 
+                # Get translated title based on language selection
+                language = user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+                title_text = self._get_entry_title(language)
+                
                 return self.async_create_entry(
-                    title=f"NAAF/Yr Pollen - {display_name}",
+                    title=f"{title_text} - {display_name}",
                     data={
                         CONF_LOCATIONS: [{CONF_LOCATION_ID: location_id, CONF_LOCATION_NAME: custom_location_name}],
                         CONF_POLLEN_TYPES: user_input.get(CONF_POLLEN_TYPES, list(VALID_POLLEN_TYPES)),
@@ -86,15 +90,9 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                     default=list(VALID_POLLEN_TYPES),
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=[
-                            {"label": "Hazel (Hassel)", "value": "hazel"},
-                            {"label": "Alder (Or)", "value": "alder"},
-                            {"label": "Willow (Salix)", "value": "willow"},
-                            {"label": "Birch (Bjørk)", "value": "birch"},
-                            {"label": "Grass (Gress)", "value": "grass"},
-                            {"label": "Mugwort (Burot)", "value": "mugwort"},
-                        ],
+                        options=list(VALID_POLLEN_TYPES),
                         multiple=True,
+                        translation_key="pollen_type",
                     ),
                 ),
                 vol.Optional(
@@ -110,11 +108,8 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                     default=DEFAULT_LANGUAGE,
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=[
-                            {"label": "Norwegian (Bokmål)", "value": "nb"},
-                            {"label": "Norwegian (Nynorsk)", "value": "nn"},
-                            {"label": "English", "value": "en"},
-                        ]
+                        options=["nb", "nn", "en"],
+                        translation_key="language",
                     ),
                 ),
             }
@@ -128,6 +123,26 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 "info": "Enter the Yr location ID (e.g., 1-189277)"
             },
         )
+
+    def _get_entry_title(self, language: str) -> str:
+        """Get translated entry title."""
+        from pathlib import Path
+        import json
+        
+        translations_dir = Path(__file__).parent / "translations"
+        lang_file = translations_dir / f"{language}.json"
+        
+        # Fall back to English if language file doesn't exist
+        if not lang_file.exists():
+            lang_file = translations_dir / "en.json"
+        
+        try:
+            with open(lang_file, encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("entry", {}).get("title", "Pollen Forecast")
+        except Exception as err:
+            _LOGGER.debug("Error loading entry title translation: %s", err)
+            return "Pollen Forecast"
 
     async def _async_fetch_region_name(self, location_id: str, language: str) -> str:
         """Fetch region name from API."""
