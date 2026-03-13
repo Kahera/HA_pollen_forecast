@@ -1,6 +1,5 @@
 {
     "name": "NAAF/Yr Pollen Forecast",
-    "domains": ["sensor"],
-    "iot_class": "Cloud Polling",
-    "hacs": "2.0.5"
+    "hacs": "2.0.5",
+    "country": ["NO"]
 }
