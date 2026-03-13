@@ -10,12 +10,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v6
 
-            - name: Install
-              run: npm ci
-
-            - name: Build
-              run: npm run build
-
             - name: Release
               uses: softprops/action-gh-release@v1
               with:
