@@ -9,7 +9,7 @@ A custom Home Assistant integration for displaying Norwegian pollen forecasts fr
 2. Click the menu (⋮) and select "Custom repositories"
 3. Add `https://github.com/kahera/pollenvarsling` as a Custom Repository
 4. Select the category "Integration"
-5. Search for "Pollenvarsel" and install
+5. Find "NAAF/Yr Pollen Forecast" and install
 
 ### Manual
 Copy the `custom_components/pollenvarsel_naaf_yr` folder to your `custom_components` directory in Home Assistant.
@@ -24,8 +24,10 @@ Configuration is done through the Home Assistant UI — no `configuration.yaml` 
 4. Fill in the form:
 
 ### Configuration
+![Screenshot of setup screen](images/setup.png)
 
 - **Location ID** (required): The Yr location ID. The code can be found in the URL of the location on yr.no (see [Finding Location IDs](#finding-location-ids) below).
+  > ℹ️: Only locations in mainland Norway will work.
 
 - **Location Name** (optional): Override the name shown in sensor names. Leave empty to use the region name from the NAAF data.
 
@@ -36,8 +38,6 @@ Configuration is done through the Home Assistant UI — no `configuration.yaml` 
   - Birch (Bjørk)
   - Grass (Gress)
   - Mugwort (Burot)
-
-  > ℹ️: Only locations in mainland Norway will work.
 
 - **Update Frequency** (optional): How often to fetch a new forecast, in hours. Default: `3`
 
@@ -54,12 +54,14 @@ Visit https://www.yr.no/nb and search for your location. The location ID is in t
 
 > Example:
 >
-> `https://www.yr.no/nb/værvarsel/daglig-tabell/1-189277/Norge/M%C3%B8re%20og%20Romsdal/Molde/Molde`
+> `https://www.yr.no/nb/værvarsel/daglig-tabell/1-189277/Norge/Møre%20og%20Romsdal/Molde/Molde`
 >
 > where `1-189277` is the ID.
 
 
 ## Sensors Created
+![Screenshot of device page with sensors](images/device.png)
+
 For each pollen type and location, the integration creates two sensors:
 - `sensor.pollen_{pollen_type}_{location_name}_today` or `sensor.pollen_{pollen_type}_{region_name}_today`
 - `sensor.pollen_{pollen_type}_{location_name}_tomorrow` or `sensor.pollen_{pollen_type}_{region_name}_tomorrow`
@@ -70,6 +72,7 @@ For each pollen type and location, the integration creates two sensors:
 - `moderate` - Moderate pollen level
 - `high` - High pollen level
 - `extreme` - Extreme pollen level
+> ℹ️ The integration was set up before anything was highly in bloom - these values need to be verified as the season progresses.  
 
 ### Sensor Attributes
 - `pollen_name` - Localized name of the pollen type (e.g., "Hassel" in nb, "Hazel" in en)
