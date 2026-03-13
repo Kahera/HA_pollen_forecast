@@ -23,18 +23,17 @@
     "pollen_type": {
       "label": {
         "hazel": "Hassel",
-        "alder": "Selje",
-        "willow": "Gråpil",
+        "alder": "Or",
+        "willow": "Salix",
         "birch": "Bjørk",
-        "grass": "Gras",
-        "mugwort": "Malurt"
+        "grass": "Gress",
+        "mugwort": "Burot"
       }
     },
     "language": {
       "label": {
         "nb": "Norsk (Bokmål)",
         "nn": "Norsk (Nynorsk)",
-        "sme": "Nord-Sámi",
         "en": "Engelsk"
       }
     }

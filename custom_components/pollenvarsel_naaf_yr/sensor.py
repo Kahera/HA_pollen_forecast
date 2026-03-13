@@ -112,14 +112,14 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         
         # Get localized day name from translations
         general = translations.get("general", {})
-        day_text = general.get(self.day, self.day.capitalize())
+        day_text = general.get(self.day, self.day.lower())
         
         # Get localized pollen name from translations
         selector = translations.get("selector", {})
         pollen_labels = selector.get("pollen_type", {}).get("label", {})
         pollen_name = pollen_labels.get(self.pollen_type, self.pollen_type.capitalize())
         
-        return f"{pollen_name} {day_text}"
+        return f"{pollen_name} {day_text} ({self._display_name})"
 
     def _get_icon(self) -> str:
         """Get icon based on pollen type."""

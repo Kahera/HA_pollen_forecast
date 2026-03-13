@@ -87,42 +87,12 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=[
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.hazel"
-                                ),
-                                value="hazel",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.alder"
-                                ),
-                                value="alder",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.willow"
-                                ),
-                                value="willow",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.birch"
-                                ),
-                                value="birch",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.grass"
-                                ),
-                                value="grass",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.pollen_type.label.mugwort"
-                                ),
-                                value="mugwort",
-                            ),
+                            {"label": "Hazel (Hassel)", "value": "hazel"},
+                            {"label": "Alder (Or)", "value": "alder"},
+                            {"label": "Willow (Salix)", "value": "willow"},
+                            {"label": "Birch (Bjørk)", "value": "birch"},
+                            {"label": "Grass (Gress)", "value": "grass"},
+                            {"label": "Mugwort (Burot)", "value": "mugwort"},
                         ],
                         multiple=True,
                     ),
@@ -141,24 +111,9 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=[
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.language.label.nb"
-                                ),
-                                value="nb",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.language.label.nn"
-                                ),
-                                value="nn",
-                            ),
-                            selector.SelectOptionDict(
-                                label=selector.SelectOptionLabelDict(
-                                    key="selector.language.label.en"
-                                ),
-                                value="en",
-                            ),
+                            {"label": "Norwegian (Bokmål)", "value": "nb"},
+                            {"label": "Norwegian (Nynorsk)", "value": "nn"},
+                            {"label": "English", "value": "en"},
                         ]
                     ),
                 ),
