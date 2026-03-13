@@ -14,7 +14,6 @@ from .const import (
     CONF_LOCATIONS,
     CONF_POLLEN_TYPES,
     DOMAIN,
-    TRANSLATIONS,
 )
 
 if TYPE_CHECKING:
@@ -109,14 +108,18 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self) -> str:
         """Return localized sensor name."""
-        language = self.coordinator.language
-        translations = TRANSLATIONS.get(language, TRANSLATIONS["en"])
-        day_text = translations[self.day]
-
-        # Use localized pollen name from coordinator's name mapping
-        pollen_name = self.coordinator.pollen_names.get(self.pollen_type, self.pollen_type)
-
-        return f"{translations['pollen']} {pollen_name} {self._display_name} {day_text}"
+        translations = self.coordinator.translations
+        
+        # Get localized day name from translations
+        general = translations.get("general", {})
+        day_text = general.get(self.day, self.day.capitalize())
+        
+        # Get localized pollen name from translations
+        selector = translations.get("selector", {})
+        pollen_labels = selector.get("pollen_type", {}).get("label", {})
+        pollen_name = pollen_labels.get(self.pollen_type, self.pollen_type.capitalize())
+        
+        return f"{pollen_name} {day_text}"
 
     def _get_icon(self) -> str:
         """Get icon based on pollen type."""

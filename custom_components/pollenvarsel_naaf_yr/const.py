@@ -13,7 +13,7 @@ CONF_LANGUAGE: Final = "language"
 
 # Valid values
 VALID_POLLEN_TYPES: Final = {"hazel", "alder", "willow", "birch", "grass", "mugwort"}
-VALID_LANGUAGES: Final = {"nb", "nn", "sme", "en"}
+VALID_LANGUAGES: Final = {"nb", "nn", "en"}
 
 # Defaults
 DEFAULT_UPDATE_FREQUENCY: Final = 3
@@ -21,11 +21,3 @@ DEFAULT_LANGUAGE: Final = "nb"
 
 # API
 BASE_URL: Final = "https://www.yr.no/api/v0/locations"
-
-# Translations
-TRANSLATIONS: Final = {
-    "nb": {"today": "I dag", "tomorrow": "I morgen", "pollen": "Pollen"},
-    "nn": {"today": "I dag", "tomorrow": "I morgon", "pollen": "Pollen"},
-    "sme": {"today": "Odne", "tomorrow": "Ihttin", "pollen": "Pollen"},
-    "en": {"today": "Today", "tomorrow": "Tomorrow", "pollen": "Pollen"},
-}

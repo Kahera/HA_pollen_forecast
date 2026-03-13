@@ -1,0 +1,47 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NAAF/Yr Pollenprognose",
+        "description": "Skriv inn Yr-stadnamnkoden (t.d. 1-189277)",
+        "data": {
+          "location_id": "Stadnamnkode",
+          "pollen_types": "Pollentyplar",
+          "update_frequency": "Oppdateringsfrekvens (timar)",
+          "language": "Språk"
+        }
+      }
+    },
+    "error": {
+      "location_required": "Stadnamnkode er påkrevd"
+    },
+    "abort": {
+      "already_configured": "Denne staden er allereini konfigurert"
+    }
+  },
+  "selector": {
+    "pollen_type": {
+      "label": {
+        "hazel": "Hassel",
+        "alder": "Selje",
+        "willow": "Gråpil",
+        "birch": "Bjørk",
+        "grass": "Gras",
+        "mugwort": "Malurt"
+      }
+    },
+    "language": {
+      "label": {
+        "nb": "Norsk (Bokmål)",
+        "nn": "Norsk (Nynorsk)",
+        "sme": "Nord-Sámi",
+        "en": "Engelsk"
+      }
+    }
+  },
+  "general": {
+    "today": "I dag",
+    "tomorrow": "I morgon",
+    "pollen": "Pollen"
+  }
+}

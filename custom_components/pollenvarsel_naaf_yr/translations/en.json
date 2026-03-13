@@ -18,5 +18,30 @@
     "abort": {
       "already_configured": "This location is already configured"
     }
+  },
+  "selector": {
+    "pollen_type": {
+      "label": {
+        "hazel": "Hazel",
+        "alder": "Alder",
+        "willow": "Willow",
+        "birch": "Birch",
+        "grass": "Grass",
+        "mugwort": "Mugwort"
+      }
+    },
+    "language": {
+      "label": {
+        "nb": "Norwegian (Bokmål)",
+        "nn": "Norwegian (Nynorsk)",
+        "sme": "Northern Sámi",
+        "en": "English"
+      }
+    }
+  },
+  "general": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "pollen": "Pollen"
   }
 }

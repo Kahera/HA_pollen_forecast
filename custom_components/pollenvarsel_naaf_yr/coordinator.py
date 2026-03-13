@@ -1,7 +1,9 @@
 """Data coordinator for NAAF Pollen Forecast integration."""
 from __future__ import annotations
 
+import json
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -40,6 +42,24 @@ class PollenDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._update_frequency = update_frequency
         self._location_data: dict[str, dict[str, Any]] = {}
         self._pollen_names: dict[str, str] = {}
+        self._translations: dict[str, Any] = {}
+        self._load_translations()
+
+    def _load_translations(self) -> None:
+        """Load translations from language file."""
+        translations_dir = Path(__file__).parent / "translations"
+        lang_file = translations_dir / f"{self.language}.json"
+        
+        # Fall back to English if language file doesn't exist
+        if not lang_file.exists():
+            lang_file = translations_dir / "en.json"
+        
+        try:
+            with open(lang_file, encoding="utf-8") as f:
+                self._translations = json.load(f)
+        except Exception as err:
+            _LOGGER.warning("Failed to load translations for %s: %s", self.language, err)
+            self._translations = {}
 
     @property
     def location_data(self) -> dict[str, dict[str, Any]]:
@@ -50,6 +70,11 @@ class PollenDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def pollen_names(self) -> dict[str, str]:
         """Get pollen names mapping."""
         return self._pollen_names
+
+    @property
+    def translations(self) -> dict[str, Any]:
+        """Get translations for current language."""
+        return self._translations
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch pollen data from NAAF API for all locations."""

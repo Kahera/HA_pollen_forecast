@@ -4,20 +4,22 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
+import aiohttp
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.helpers import selector
 
 from .const import (
+    BASE_URL,
     CONF_LANGUAGE,
     CONF_LOCATION_ID,
+    CONF_LOCATION_NAME,
     CONF_LOCATIONS,
     CONF_POLLEN_TYPES,
     CONF_UPDATE_FREQUENCY,
     DEFAULT_LANGUAGE,
     DEFAULT_UPDATE_FREQUENCY,
     DOMAIN,
-    VALID_LANGUAGES,
     VALID_POLLEN_TYPES,
 )
 
@@ -32,7 +34,7 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
+    async def async_step_location(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Handle the initial step."""
@@ -48,10 +50,27 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(location_id)
                 self._abort_if_unique_id_configured()
                 
+                # Get custom location name or fetch from API
+                custom_location_name = user_input.get(CONF_LOCATION_NAME, "").strip()
+                region_name = custom_location_name
+                
+                # If no custom name, try to fetch from API
+                if not region_name:
+                    try:
+                        region_name = await self._async_fetch_region_name(
+                            location_id, user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+                        )
+                    except Exception as err:
+                        _LOGGER.warning("Failed to fetch region name: %s", err)
+                        region_name = location_id
+                
+                # Use region name or location_id as fallback
+                display_name = region_name or location_id
+                
                 return self.async_create_entry(
-                    title=f"NAAF/Yr Pollen - {location_id}",
+                    title=f"NAAF/Yr Pollen - {display_name}",
                     data={
-                        CONF_LOCATIONS: [{CONF_LOCATION_ID: location_id}],
+                        CONF_LOCATIONS: [{CONF_LOCATION_ID: location_id, CONF_LOCATION_NAME: custom_location_name}],
                         CONF_POLLEN_TYPES: user_input.get(CONF_POLLEN_TYPES, list(VALID_POLLEN_TYPES)),
                         CONF_UPDATE_FREQUENCY: user_input.get(CONF_UPDATE_FREQUENCY, DEFAULT_UPDATE_FREQUENCY),
                         CONF_LANGUAGE: user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
@@ -61,18 +80,49 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_LOCATION_ID): selector.TextSelector(),
+                vol.Optional(CONF_LOCATION_NAME): selector.TextSelector(),
                 vol.Required(
                     CONF_POLLEN_TYPES,
                     default=list(VALID_POLLEN_TYPES),
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=[
-                            {"label": "Hazel", "value": "hazel"},
-                            {"label": "Alder", "value": "alder"},
-                            {"label": "Willow", "value": "willow"},
-                            {"label": "Birch", "value": "birch"},
-                            {"label": "Grass", "value": "grass"},
-                            {"label": "Mugwort", "value": "mugwort"},
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.hazel"
+                                ),
+                                value="hazel",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.alder"
+                                ),
+                                value="alder",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.willow"
+                                ),
+                                value="willow",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.birch"
+                                ),
+                                value="birch",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.grass"
+                                ),
+                                value="grass",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.pollen_type.label.mugwort"
+                                ),
+                                value="mugwort",
+                            ),
                         ],
                         multiple=True,
                     ),
@@ -91,10 +141,24 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 ): selector.SelectSelector(
                     selector.SelectSelectorConfig(
                         options=[
-                            {"label": "Norwegian (Bokmål)", "value": "nb"},
-                            {"label": "Norwegian (Nynorsk)", "value": "nn"},
-                            {"label": "Northern Sámi", "value": "sme"},
-                            {"label": "English", "value": "en"},
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.language.label.nb"
+                                ),
+                                value="nb",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.language.label.nn"
+                                ),
+                                value="nn",
+                            ),
+                            selector.SelectOptionDict(
+                                label=selector.SelectOptionLabelDict(
+                                    key="selector.language.label.en"
+                                ),
+                                value="en",
+                            ),
                         ]
                     ),
                 ),
@@ -102,13 +166,28 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
         return self.async_show_form(
-            step_id="user",
+            step_id="location",
             data_schema=schema,
             errors=_errors,
             description_placeholders={
                 "info": "Enter the Yr location ID (e.g., 1-189277)"
             },
         )
+
+    async def _async_fetch_region_name(self, location_id: str, language: str) -> str:
+        """Fetch region name from API."""
+        try:
+            url = f"{BASE_URL}/{location_id}/pollen?language={language}"
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        region_name = data.get("_embedded", {}).get("regionName")
+                        if region_name:
+                            return region_name
+        except Exception as err:
+            _LOGGER.debug("Error fetching region name: %s", err)
+        return ""
 
     async def async_step_import(self, import_data: dict[str, Any]) -> ConfigFlowResult:
         """Handle import from YAML configuration."""
