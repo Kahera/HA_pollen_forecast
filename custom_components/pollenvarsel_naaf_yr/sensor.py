@@ -77,6 +77,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
     """Sensor for pollen level."""
 
     _attr_attribution = "Data from NAAF (Norwegian Asthma and Allergy Association)"
+    _attr_has_entity_name = True
 
     def __init__(
         self,
@@ -103,27 +104,22 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = (
             f"{entry_id}_{location_id}_{pollen_type.lower()}_{day}"
         )
+        self._attr_translation_key = f"pollen_{day}"
         self.entity_id = f"sensor.pollen_{pollen_type}_{slugify(self._display_name)}_{day}"
         self._attr_device_info = device_info
         self._attr_icon = self._get_icon()
 
     @property
-    def name(self) -> str:
-        """Return localized sensor name."""
-        translations = self.coordinator.translations
-        
-        # Get localized day name from translations
-        general = translations.get("general", {})
-        day_text = general.get(self.day, self.day.lower())
-        
-        # Get localized pollen name from translations
-        selector = translations.get("selector", {})
-        pollen_labels = selector.get("pollen_type", {}).get("options", {})
-        pollen_name = pollen_labels.get(self.pollen_type, self.pollen_type.capitalize())
-        
-        return f"{pollen_name} {day_text} ({self._display_name})"
+    def translation_placeholders(self) -> dict[str, str]:
+        """Return translation placeholders for entity name."""
+        pollen_name = (
+            self.coordinator.pollen_names.get(self.pollen_type)h
+            or self.pollen_type.capitalize()
+        )
+        return {"pollen_type": pollen_name}
 
-    def _get_icon(self) -> str:
+    @property
+    def icon(self) -> str:
         """Get icon based on pollen type."""
         icons = {
             "hazel": "mdi:tree",
@@ -156,12 +152,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
             "region_name": location_data.get("region_name"),
             "last_updated": location_data.get("last_updated"),
         }
-        level_name = pollen_data.get("level_name")
-        if not level_name:
-            level = pollen_data.get("level") or "none"
-            levels_translations = self.coordinator.translations.get("levels", {})
-            level_key = str(level).lower()
-            level_name = levels_translations.get(level_key) or str(level)
+        level_name = pollen_data.get("level_name") or pollen_data.get("level") or "none"
         attrs["level_name"] = level_name
         if self.custom_location_name:
             attrs["location_name"] = self.custom_location_name
