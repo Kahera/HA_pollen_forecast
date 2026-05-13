@@ -8,6 +8,7 @@ import aiohttp
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.helpers import selector
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     BASE_URL,
@@ -66,13 +67,9 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
                 
                 # Use region name or location_id as fallback
                 display_name = region_name or location_id
-                
-                # Get translated title based on language selection
-                language = user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-                title_text = self._get_entry_title(language)
-                
+
                 return self.async_create_entry(
-                    title=f"{title_text} - {display_name}",
+                    title=display_name,
                     data={
                         CONF_LOCATIONS: [{CONF_LOCATION_ID: location_id, CONF_LOCATION_NAME: custom_location_name}],
                         CONF_POLLEN_TYPES: user_input.get(CONF_POLLEN_TYPES, list(VALID_POLLEN_TYPES)),
@@ -124,37 +121,17 @@ class PollenvarselConfigFlow(ConfigFlow, domain=DOMAIN):
             },
         )
 
-    def _get_entry_title(self, language: str) -> str:
-        """Get translated entry title."""
-        from pathlib import Path
-        import json
-        
-        translations_dir = Path(__file__).parent / "translations"
-        lang_file = translations_dir / f"{language}.json"
-        
-        # Fall back to English if language file doesn't exist
-        if not lang_file.exists():
-            lang_file = translations_dir / "en.json"
-        
-        try:
-            with open(lang_file, encoding="utf-8") as f:
-                data = json.load(f)
-                return data.get("entry", {}).get("title", "Pollen Forecast")
-        except Exception as err:
-            _LOGGER.debug("Error loading entry title translation: %s", err)
-            return "Pollen Forecast"
-
     async def _async_fetch_region_name(self, location_id: str, language: str) -> str:
         """Fetch region name from API."""
         try:
             url = f"{BASE_URL}/{location_id}/pollen?language={language}"
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
-                    if resp.status == 200:
-                        data = await resp.json()
-                        region_name = data.get("_embedded", {}).get("regionName")
-                        if region_name:
-                            return region_name
+            session = async_get_clientsession(self.hass)
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    region_name = data.get("_embedded", {}).get("regionName")
+                    if region_name:
+                        return region_name
         except Exception as err:
             _LOGGER.debug("Error fetching region name: %s", err)
         return ""
