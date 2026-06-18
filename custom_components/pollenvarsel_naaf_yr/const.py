@@ -39,3 +39,11 @@ LEVEL_NAMES: Final[dict[str, dict[str, str]]] = {
     "nn": {"none": "Ingen", "low": "Beskjeden", "moderate": "Moderat", "severe": "Kraftig", "extreme": "Ekstrem"},
     "en": {"none": "None", "low": "Low", "moderate": "Moderate", "severe": "Severe", "extreme": "Extreme"},
 }
+
+LEVEL_COLORS: Final[dict[str, str]] = {
+    "none": "green",
+    "low": "yellow",
+    "moderate": "orange",
+    "severe": "red",
+    "extreme": "purple"
+}

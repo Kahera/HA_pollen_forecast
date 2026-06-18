@@ -74,10 +74,51 @@ For each pollen type and location, the integration creates two sensors:
 ### Sensor Attributes
 - `pollen_name` - Localized name of the pollen type (e.g., "Hassel" in nb, "Hazel" in en)
 - `level_name` - Localized distribution level name (e.g., "Beskjeden", "Moderat")
+- `state_color` - Suggested icon color for the current level (see [Dashboard Coloring](#dashboard-coloring))
 - `date` - Forecast date
 - `region_name` - Region name fetched from the API
 - `location_name` - Custom name as set in the configuration, if present
 - `last_updated` - Date & time for when the sensor was last updated
+
+## Dashboard Coloring
+
+Home Assistant does not color `sensor` icons based on their state natively, so the
+integration exposes a `level_color` attribute holding a suggested color for the
+current level (green/yellow/orange/red/purple). You can consume it in a dashboard using [card-mod](https://github.com/thomasloven/lovelace-card-mod) (HACS).
+
+The example below uses the `level_color` attribute as the **default**, while
+letting users override any level with their own colors via a theme variable:
+
+```yaml
+type: tile
+entity: sensor.pollen_birch_molde_today
+state_content: level_name
+card_mod:
+  style: |
+    ha-tile-icon {
+      --tile-color: var(
+        --pollen-{{ states(config.entity) }}-color,
+        {{ state_attr(config.entity, 'level_color') }}
+      );
+    }
+```
+![Screenshot showing tile cards with state_content set to level_name and icons displaying the level color](images/tile-example.png)
+
+- `state_content: level_name` shows the localized level (e.g. "Beskjeden") instead of the raw state.
+- If the user defines a matching theme variable (e.g. `--pollen-low-color`), it takes priority.
+- Otherwise it falls back to the integration's default `level_color`.
+
+To override the defaults, add the variables to any theme:
+
+```yaml
+# themes.yaml
+my_theme:
+  pollen-none-color: "#607D8B"
+  pollen-low-color: "#8BC34A"
+  pollen-moderate-color: "#FFC107"
+  pollen-severe-color: "#FF5722"
+  pollen-extreme-color: "#E91E63"
+```
 
 ## Automation Example
 
