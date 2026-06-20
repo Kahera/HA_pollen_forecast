@@ -15,6 +15,7 @@ from .const import (
     CONF_LOCATIONS,
     CONF_POLLEN_TYPES,
     DOMAIN,
+    LEVEL_COLORS,
 )
 
 if TYPE_CHECKING:
@@ -155,6 +156,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         level = pollen_data.get("level", "none")
         level_name = pollen_data.get("level_name") or self.coordinator.level_names.get(level, level)
         attrs["level_name"] = level_name
+        attrs["level_color"] = LEVEL_COLORS.get(level, LEVEL_COLORS["none"])
         if self.custom_location_name:
             attrs["location_name"] = self.custom_location_name
         return attrs
