@@ -74,7 +74,7 @@ For each pollen type and location, the integration creates two sensors:
 ### Sensor Attributes
 - `pollen_name` - Localized name of the pollen type (e.g., "Hassel" in nb, "Hazel" in en)
 - `level_name` - Localized distribution level name (e.g., "Beskjeden", "Moderat")
-- `state_color` - Suggested icon color for the current level (see [Dashboard Coloring](#dashboard-coloring))
+- `level_color` - Suggested icon color for the current level (see [Dashboard Coloring](#dashboard-coloring))
 - `date` - Forecast date
 - `region_name` - Region name fetched from the API
 - `location_name` - Custom name as set in the configuration, if present
