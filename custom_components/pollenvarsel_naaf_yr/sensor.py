@@ -48,7 +48,8 @@ async def async_setup_entry(
         # Get region name from coordinator data
         location_data = coordinator.location_data.get(location_id, {})
         region_name = location_data.get("region_name", location_id)
-        display_name = custom_location_name or region_name
+        # The API can return an empty regionName, which would give an invalid entity ID
+        display_name = custom_location_name or region_name or entry.title or location_id
 
         # Create device info for this location
         device_info = DeviceInfo(
@@ -65,6 +66,7 @@ async def async_setup_entry(
                     entry_id=entry.entry_id,
                     location_id=location_id,
                     custom_location_name=custom_location_name,
+                    display_name=display_name,
                     pollen_type=pollen_type,
                     day=day,
                     device_info=device_info,
@@ -86,6 +88,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         entry_id: str,
         location_id: str,
         custom_location_name: str | None,
+        display_name: str,
         pollen_type: str,
         day: str,
         device_info: DeviceInfo,
@@ -96,11 +99,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         self.day = day
         self.location_id = location_id
         self.custom_location_name = custom_location_name
-
-        region_name = coordinator.location_data.get(location_id, {}).get(
-            "region_name", location_id
-        )
-        self._display_name = custom_location_name or region_name
+        self._display_name = display_name
 
         self._attr_unique_id = (
             f"{entry_id}_{location_id}_{pollen_type.lower()}_{day}"
